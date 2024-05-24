@@ -1,160 +1,128 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+def calcular_e_imprimir_contas(produto, CF, CV, IV, ML, lote, Qlotes=0, Plotes=0):
+    if lote == "s":
+        Venda = (produto / ((1 - ((CF / 100) + (CV / 100) + (IV / 100) + (ML / 100))) / 100) / 100)
+        Lucro = (Venda - produto) * (Qlotes * Plotes)
+        llucro = int(((Lucro * 100) / (produto * (Qlotes * Plotes))))
 
-# C extensions
-*.so
+        print('\n\nDescrição  [valor/%]')
+        print("A.Venda: R${:.2f}".format(Venda), '100%')
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+        Pp = (produto * 100 / Venda)
+        print("B.Produto: R${:.2f}".format(produto), int(Pp), '%')
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+        CADM = (CF * 100 / Venda)
+        print("C.Custos adm: R${:.2f};".format(CADM), CF, '%')
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+        CVE = (CV * 100 / Venda)
+        print("D.Comissão de Vendas: R${:.2f};".format(CVE), CV, '%')
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-cover/
+        I = (IV * 100 / Venda)
+        print("E.Imposto: R${:.2f};".format(I), IV, '%')
 
-# Translations
-*.mo
-*.pot
+        RB = Venda - produto
+        PRB = (RB * 100 / Venda)
+        print("F.Receita Bruta: R${:.2f};".format(RB), int(PRB), '%')
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+        Oc = CADM + I + CVE
+        POc = ((Oc / 100) * Venda)
+        print("G.Outros Custos: R${:.2f};".format(Oc), int(POc), '%')
 
-# Flask stuff:
-instance/
-.webassets-cache
+    else:
+        Venda = (produto / ((1 - ((CF / 100) + (CV / 100) + (IV / 100) + (ML / 100))) / 100) / 100)
+        Lucro = Venda - produto
+        llucro = int(((Lucro / produto) * 100))
 
-# Scrapy stuff:
-.scrapy
 
-# Sphinx documentation
-docs/_build/
+        print('\n\nDescrição  [valor/%]')
+        print("A.Venda: R${:.2f};".format(Venda), '100%')
 
-# PyBuilder
-.pybuilder/
-target/
+        Pp = (produto * 100 / Venda)
+        print("B.Produto: R${:.2f};".format(produto), int(Pp), '%')
 
-# Jupyter Notebook
-.ipynb_checkpoints
+        RB = Venda - produto
+        PRB = (RB * 100 / Venda)
+        print("F.Receita Bruta: R${:.2f};".format(RB), int(PRB), '%')
 
-# IPython
-profile_default/
-ipython_config.py
+        CADM = (CF / 100 * Venda)
+        print("C.Custos adm: R${:.2f};".format(CADM), CF, '%')
 
-# pyenv
-#   For a library or package, you might want to ignore these files since the code is
-#   intended to run in multiple environments; otherwise, check them in:
-# .python-version
+        CVE = (CV / 100 * Venda)
+        print("D.Comissão de Vendas: R${:.2f};".format(CVE), CV, '%')
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
+        I = (IV / 100 * Venda)
+        print("E.Imposto: R${:.2f};".format(I), IV, '%')
 
-# poetry
-#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
-#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
-#poetry.lock
+        Oc = (CVE + I + CADM)
+        POc = (Oc * 100 / Venda)
+        print("G.Outros Custos: R${:.2f};".format(Oc), int(POc), '%')
 
-# pdm
-#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
-#pdm.lock
-#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
-#   in version control.
-#   https://pdm.fming.dev/#use-with-ide
-.pdm.toml
+        Ren = RB - Oc
+        PRen = (Ren * 100 / Venda)
+        print("H.Rentabilidade: R${:.2f}".format(Ren), int(PRen), '%')
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
-__pypackages__/
+    #print("\nO valor do Lucro foi ", llucro, '%')
+    #print("O valor do Lucro foi R${:.2f}".format(Lucro))
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
+    if llucro < 0:
+        print('O valor do Lucro está negativo!')
 
-# SageMath parsed files
-*.sage.py
+    if llucro >= 20:
+        print("O valor do Lucro foi alto")
+    elif llucro >= 10:
+        print("O valor do Lucro foi médio")
+    elif llucro > 0:
+        print("O valor do Lucro foi baixo")
+    else:
+        print('O valor do Lucro está equilibrado')
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+def main():
+    continuar = True
+    while continuar:
+        produto = 0
+        CF = 0
+        CV = 0
+        IV = 0
+        ML = 0
+        lote = 0
+        Qlotes = 0
+        Plotes = 0
 
-# Rope project settings
-.ropeproject
+        try:
+            produto = float(input("\n\nDigite o valor do produto [Em $]\n"))
+            ML = float(input("\n\nDigite o valor da margem de lucro [Em %]\n"))
+            CF = float(input("\n\nDigite o valor do Custo Fixo/Administrativo [Em %]\n"))
+            IV = float(input("\n\nDigite o valor Impostos [Em %]\n"))
+            CV = float(input("\n\nDigite o valor do Comissão de Vendas [Em %]\n"))
 
-# mkdocs documentation
-/site
+        except:
+            print('Digite apenas numeros!')
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+        while True:
+            lote = input("\n\nO produto é vendido em lote? [s/n]\n").lower()
 
-# Pyre type checker
-.pyre/
+            if (lote == 'n' or lote == 's'):
+                break
 
-# pytype static type analyzer
-.pytype/
+        if lote == "s":
+            Qlotes = int(input("\n\nQuantos lotes foram comprandos?\n"))
+            Plotes = int(input("\n\nQuantos produtos tem em cada lote?\n"))
 
-# Cython debug symbols
-cython_debug/
+        calcular_e_imprimir_contas(produto, CF, CV, IV, ML, lote, Qlotes, Plotes)
 
-# PyCharm
-#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
-#.idea/
+        while True:
+            respostaContinuar = input('\nDeseja continuar? [S/N] ').lower()
+
+            if (respostaContinuar == 'n' or respostaContinuar == 's'):
+                break
+
+        if respostaContinuar == 's':
+            continuar = True
+        elif respostaContinuar == 'n':
+            continuar = False
+        else:
+            continuar = False
+
+
+if __name__ == "_main_":
+    main()
