@@ -1,0 +1,112 @@
+Já ligado ao banco de dados executar código:
+
+
+import mysql.connector
+from tabulate import tabulate
+
+# Conexão com o banco de dados mysql
+try:
+    db_connection = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="sua nova senha",
+        database="projetoint",
+    )
+    print("Conexão bem sucedida! ")
+except Exception as e:
+    print("Erro ao conectar ao banco de dados:", e)
+    exit(1)
+
+
+def ler_produto_código():
+
+    codigo = int(input('Digite o código do produto: '))
+
+    cursor = db_connection.cursor()
+
+    # Verificar se o produto com o código fornecido existe
+    cursor.execute("SELECT * FROM produtos WHERE codigo = %s", (codigo,))
+    produto = cursor.fetchone()
+
+    if produto is None:
+        print(f'O produto com código {codigo} não foi encontrado!')
+    else:
+        # Extrair os dados do produto existente
+        codigo = produto[0]
+        nome = produto[1]
+        descricao = produto[2]
+        cp = float(produto[3])
+        cf = float(produto[4])
+        cv = float(produto[5])
+        iv = float(produto[6])
+        ml = float(produto[7])
+
+        # Calculo do preço de venda
+        pv = cp / (1 - ((cf + cv + iv + ml) / 100))
+
+        # Calculo da receita bruta
+        rc = (pv - cp)
+        
+        # Calculo dos outros custos
+        oc = ((cf * pv) / 100) + ((cv * pv) / 100) + ((iv * pv) / 100)
+
+        # Calculo da rentabilidade
+        rt = (rc - oc)
+
+        # Calculo dos impostos
+        ip = ((iv * pv) / 100, iv)
+
+
+        # Classificação de lucro
+        if ml > 20:
+            classificacao = 'Alto'
+        elif ml > 10 and ml <= 20:
+            classificacao = 'Médio'
+        elif ml > 0 and ml <= 10:
+            classificacao = 'Baixo'
+        elif ml == 0:
+            classificacao = 'Equilibrio'
+        else:
+            classificacao = 'Prejuizo'
+
+
+        
+        lista_produtos = [
+        ['Descrição', 'Valor', '%'],
+        ['Produto', nome, ''],
+        ['Descricao', descricao],
+        ['Codigo', codigo, ''],
+        ['A. Preço de venda', pv, '100%'],
+        ['B. Custo de Aquisição (Fornecedor)', cp, (cp / pv) * 100],
+        ['C. Receita Bruta', pv - cp, ((pv - cp) / pv) * 100],
+        ['D. Custo Fixo/Administrativo', (cf * pv) / 100, cf],
+        ['E. Comissão de Vendas', (cv * pv) / 100, cv],
+        ['F. Impostos', (iv * pv) / 100, iv],
+        ['G. Outros Custos', oc, (oc / pv) * 100],
+        ['H. Rentabilidade', rt, (rt / pv) * 100],
+        ['I. Classificação de Lucro', classificacao, '']
+]
+
+        print()
+
+        print(tabulate(lista_produtos, headers='firstrow'))
+
+        print()
+
+# Menu de opções
+while True:
+    print("1. Consultar produto existente pelo código")
+    print("2. Sair")
+
+    opcao = input("Escolha uma opção: ")
+
+    if opcao == '1':
+        ler_produto_código()
+    elif opcao == '2':
+        break
+    else:
+        print("Opção inválida. Tente novamente.")
+
+
+db_connection.close()
+
